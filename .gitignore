@@ -3,3 +3,9 @@
 
 # Model checkpoints
 /checkpoints/
+
+# Data
+/data/
+
+# Results
+/results/
