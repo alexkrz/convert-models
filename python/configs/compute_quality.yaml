@@ -1,0 +1,7 @@
+data_dir: ${oc.env:DATASET_DIR}$/EvalDatasets/lfw
+data_name: lfw
+file_ext: .jpg
+method_name: crfiqa-l
+checkpoint_fp: checkpoints/CRFIQA-L/181952backbone.pth
+save_dir: results
+gpu: 0

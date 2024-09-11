@@ -60,11 +60,11 @@ class FaceDataset(Dataset):
 
 
 def main(
-    data_dir: str = os.environ["DATASET_DIR"] + "/Multi-PIE/aligned_probes",
-    data_name: str = "multi-pie",
-    file_ext: str = ".png",
-    method_name: str = "ser-fiq",
-    checkpoint_fp: str = "checkpoints/ser_fiq/resnet18.pth",
+    data_dir: str = os.environ["DATASET_DIR"] + "/EvalDatasets/lfw",
+    data_name: str = "lfw",
+    file_ext: str = ".jpg",
+    method_name: str = "crfiqa-l",
+    checkpoint_fp: str = "checkpoints/CRFIQA-L/181952backbone.pth",
     save_dir: str = "results",
     gpu: Optional[int] = 0,
 ):
@@ -95,7 +95,7 @@ def main(
             model = crfiqa_iresnet50(num_features=512, qs=1, use_se=False)
         if method_name == "crfiqa-l":
             model = crfiqa_iresnet100(num_features=512, qs=1, use_se=False)
-        weight = torch.load(checkpoint_fp)
+        weight = torch.load(checkpoint_fp, weights_only=True)
         model.load_state_dict(weight)
     else:
         raise NotImplementedError()
@@ -127,11 +127,11 @@ def main(
     df_out = pd.DataFrame({"sample": filename_arr, "quality": qs_scores_arr})
     print(df_out.head())
     df_out.to_csv(
-        save_dir / f"{method_name}_{data_name}.csv",
+        save_dir / f"{method_name}_{data_name}.txt",
         float_format="%.6f",
         header=True,
         index=False,
-        sep=";",
+        sep=" ",
     )
 
 

@@ -1,6 +1,9 @@
 # IDE
 /.vscode/
 
+# Execution artifacts
+__pycache__/
+
 # Model checkpoints
 /checkpoints/
 
