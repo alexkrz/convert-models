@@ -1,0 +1,5 @@
+pre-commit==3.8.*
+jsonargparse[omegaconf,signatures]==4.32.*
+tqdm==4.66.*
+matplotlib==3.9.*
+pandas==2.2.*
