@@ -1,0 +1,5 @@
+# IDE
+/.vscode/
+
+# Model checkpoints
+/checkpoints/
