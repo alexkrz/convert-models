@@ -176,7 +176,7 @@ class IResNet(nn.Module):
 
         x = self.features(x)
         qs = self.qs(x)
-        return qs
+        return x, qs
 
 
 class IdentityIResNet(nn.Module):
