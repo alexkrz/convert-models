@@ -64,7 +64,7 @@ def main(
     data_name: str = "lfw",
     file_ext: str = ".jpg",
     method_name: str = "crfiqa-l",
-    checkpoint_fp: str = "checkpoints/CRFIQA-L/181952backbone.pth",
+    checkpoint_fp: str = "checkpoints/pytorch/CRFIQA-L/181952backbone.pth",
     save_dir: str = "results",
     gpu: Optional[int] = 0,
 ):
