@@ -51,6 +51,7 @@ def main(
     print("qs shape:", qs.shape)
 
     # Export the model
+    print("Exporting model..")
     torch.onnx.export(
         model,  # model being run
         x,  # model input (or a tuple for multiple inputs)
@@ -66,6 +67,8 @@ def main(
             "qs": {0: "batch_size"},
         },
     )
+
+    print(f"Model successfully exported to {str(save_dir)}/{method_name}.onnx")
 
 
 if __name__ == "__main__":
