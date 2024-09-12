@@ -111,7 +111,7 @@ def main(
         imgs, filenames = batch_data
         with torch.no_grad():
             if "crfiqa" in method_name:
-                feats, qs = model(imgs.to(device))
+                qs = model(imgs.to(device))
             else:
                 raise NotImplementedError()
         qs_scores = qs.cpu().numpy()  # Move qs_scores to CPU and convert to numpy array
