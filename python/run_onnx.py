@@ -38,11 +38,12 @@ def main(
         filename_list.append(filename)
         # Prepare model input
         img = cv2.imread(str(img_p))
+        # Make blobFromImage equivalent to transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
         blob = cv2.dnn.blobFromImage(
             img,
-            scalefactor=1.0 / 255,
+            scalefactor=1 / (127.5),
             size=input_size,
-            mean=(0, 0, 0),
+            mean=[127.5] * 3,
             swapRB=True,
             crop=False,
         )
