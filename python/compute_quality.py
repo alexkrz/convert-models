@@ -60,7 +60,7 @@ class FaceDataset(Dataset):
 
 
 def main(
-    data_dir: str = os.environ["DATASET_DIR"] + "/EvalDatasets/lfw",
+    data_dir: str = "data/lfw",
     data_name: str = "lfw",
     file_ext: str = ".jpg",
     method_name: str = "crfiqa-l",
