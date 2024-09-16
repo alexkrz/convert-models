@@ -19,5 +19,6 @@
 
 ## Todos
 
-- [ ] Use opencv instead of onnxruntime
-- [ ] Compare results between pytorch model and onnx model
+- [x] Use opencv instead of onnxruntime
+- [x] Compare results between pytorch model and onnx model
+- [ ] Add cpp implementation for onnx model
