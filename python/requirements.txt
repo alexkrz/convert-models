@@ -3,5 +3,4 @@ jsonargparse[omegaconf,signatures]==4.32.*
 tqdm==4.66.*
 matplotlib==3.9.*
 pandas==2.2.*
-onnx==1.16.2
-onnxruntime==1.19.2
+opencv-python==4.10.*
