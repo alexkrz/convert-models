@@ -43,7 +43,7 @@ def main(
             img,
             scalefactor=1 / (127.5),
             size=input_size,
-            mean=[127.5] * 3,
+            mean=(127.5, 127.5, 127.5),
             swapRB=True,
             crop=False,
         )

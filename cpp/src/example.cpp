@@ -62,8 +62,8 @@ void inference(
         // Run forward pass
         model.setInput(blob);
         std::vector<cv::Mat> outputs;
-        model.forward(outputs, model.getUnconnectedOutLayersNames());
-        float qs = outputs[1].at<float>(0);
+        model.forward(outputs, model.getUnconnectedOutLayersNames()); // Why does it not return the "feats" node?
+        float qs = outputs[0].at<float>(0);
         qs_scores_arr[idx] = qs;
 
         if (idx == 199)
@@ -76,7 +76,7 @@ void inference(
     qs_scores_arr.resize(img_list.size());
     std::cout << "Shape of qs_scores_arr: " << qs_scores_arr.size() << std::endl;
 
-    std::ofstream out_file(save_path / (method_name + "_" + data_name + "_onnx.txt"));
+    std::ofstream out_file(save_path / (method_name + "_" + data_name + "_onnx_cpp.txt"));
     out_file << std::fixed << std::setprecision(6);
     out_file << "sample quality\n";
     for (size_t i = 0; i < filename_list.size(); ++i)
