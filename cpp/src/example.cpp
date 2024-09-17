@@ -50,6 +50,12 @@ void inference(
 
         // Prepare model input
         cv::Mat img = cv::imread(img_p.string());
+
+        // Show image
+        // cv::namedWindow("Display window", cv::WINDOW_NORMAL);
+        // cv::imshow("Display window", img);
+        // cv::waitKey(0);
+
         cv::Mat blob;
         cv::dnn::blobFromImage(img, blob, 1.0 / 127.5, input_size, cv::Scalar(127.5, 127.5, 127.5), true, false);
 
