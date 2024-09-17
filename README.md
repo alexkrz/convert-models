@@ -17,6 +17,13 @@
     pip install -r requirements.txt
     ```
 
+## Resources
+
+List of useful resources:
+
+- <https://github.com/onnx/tutorials>
+- <https://pytorch.org/tutorials/advanced/super_resolution_with_onnxruntime.html>
+
 ## Todos
 
 - [x] Use opencv instead of onnxruntime
