@@ -1,98 +1,87 @@
-/**
- * @file CannyDetector_Demo.cpp
- * @brief Sample code showing how to detect edges using the Canny Detector
- * @author OpenCV team
- * Source: https://github.com/opencv/opencv/blob/4.x/samples/cpp/tutorial_code/ImgTrans/CannyDetector_Demo.cpp
- */
-
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgproc.hpp"
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <opencv2/opencv.hpp>
+#include <string>
+#include <vector>
 
-using namespace cv;
+namespace fs = std::filesystem;
 
-//![variables]
-Mat src, src_gray;
-Mat dst, detected_edges;
-
-int lowThreshold = 0;
-const int max_lowThreshold = 100;
-const int ratio = 3;
-const int kernel_size = 3;
-const char* window_name = "Edge Map";
-//![variables]
-
-/**
- * @function CannyThreshold
- * @brief Trackbar callback - Canny thresholds input with a ratio 1:3
- */
-static void CannyThreshold(int, void*)
+void inference(
+    const std::string& data_dir = "/home/kurz/git-work/convert-models/data/lfw",
+    const std::string& data_name = "lfw",
+    const std::string& file_ext = ".jpg",
+    const std::string& method_name = "crfiqa-l",
+    const std::string& checkpoint_fp = "/home/kurz/git-work/convert-models/checkpoints/onnx/crfiqa-l.onnx",
+    const std::string& save_dir = "/home/kurz/git-work/convert-models/results")
 {
-    //![reduce_noise]
-    /// Reduce noise with a kernel 3x3
-    blur(src_gray, detected_edges, Size(3, 3));
-    //![reduce_noise]
+    // Check directories
+    fs::path data_path(data_dir);
+    fs::path save_path(save_dir);
+    if (!fs::exists(save_path))
+    {
+        fs::create_directory(save_path);
+    }
 
-    //![canny]
-    /// Canny detector
-    Canny(detected_edges, detected_edges, lowThreshold, lowThreshold * ratio, kernel_size);
-    //![canny]
+    // Glob data_dir
+    std::vector<fs::path> img_list;
+    for (const auto& entry : fs::directory_iterator(data_path))
+    {
+        if (entry.path().extension() == file_ext)
+        {
+            img_list.push_back(entry.path());
+        }
+    }
+    std::sort(img_list.begin(), img_list.end());
 
-    /// Using Canny's output as a mask, we display our result
-    //![fill]
-    dst = Scalar::all(0);
-    //![fill]
+    // Read model and set input_size
+    std::cout << "Loading ONNX model.." << std::endl;
+    cv::dnn::Net model = cv::dnn::readNetFromONNX(checkpoint_fp);
+    cv::Size input_size(112, 112);
 
-    //![copyto]
-    src.copyTo(dst, detected_edges);
-    //![copyto]
+    std::vector<std::string> filename_list;
+    std::vector<float> qs_scores_arr(img_list.size(), 0.0f);
 
-    //![display]
-    imshow(window_name, dst);
-    //![display]
+    for (size_t idx = 0; idx < img_list.size(); ++idx)
+    {
+        fs::path img_p = img_list[idx];
+        filename_list.push_back(img_p.filename().string());
+
+        // Prepare model input
+        cv::Mat img = cv::imread(img_p.string());
+        cv::Mat blob;
+        cv::dnn::blobFromImage(img, blob, 1.0 / 127.5, input_size, cv::Scalar(127.5, 127.5, 127.5), true, false);
+
+        // Run forward pass
+        model.setInput(blob);
+        std::vector<cv::Mat> outputs;
+        model.forward(outputs, model.getUnconnectedOutLayersNames());
+        float qs = outputs[1].at<float>(0);
+        qs_scores_arr[idx] = qs;
+
+        if (idx == 199)
+        {
+            break;
+        }
+    }
+
+    std::cout << "Saving results.." << std::endl;
+    qs_scores_arr.resize(img_list.size());
+    std::cout << "Shape of qs_scores_arr: " << qs_scores_arr.size() << std::endl;
+
+    std::ofstream out_file(save_path / (method_name + "_" + data_name + "_onnx.txt"));
+    out_file << std::fixed << std::setprecision(6);
+    out_file << "sample quality\n";
+    for (size_t i = 0; i < filename_list.size(); ++i)
+    {
+        out_file << filename_list[i] << " " << qs_scores_arr[i] << "\n";
+    }
+    out_file.close();
 }
 
-/**
- * @function main
- */
-int main(int argc, char** argv)
+int main()
 {
-    //![load]
-    CommandLineParser parser(argc, argv, "{@input | fruits.jpg | input image}");
-    src = imread(samples::findFile(parser.get<String>("@input")), IMREAD_COLOR); // Load an image
-
-    if (src.empty())
-    {
-        std::cout << "Could not open or find the image!\n"
-                  << std::endl;
-        std::cout << "Usage: " << argv[0] << " <Input image>" << std::endl;
-        return -1;
-    }
-    //![load]
-
-    //![create_mat]
-    /// Create a matrix of the same type and size as src (for dst)
-    dst.create(src.size(), src.type());
-    //![create_mat]
-
-    //![convert_to_gray]
-    cvtColor(src, src_gray, COLOR_BGR2GRAY);
-    //![convert_to_gray]
-
-    //![create_window]
-    namedWindow(window_name, WINDOW_AUTOSIZE);
-    //![create_window]
-
-    //![create_trackbar]
-    /// Create a Trackbar for user to enter threshold
-    createTrackbar("Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold);
-    //![create_trackbar]
-
-    /// Show the image
-    CannyThreshold(0, 0);
-
-    /// Wait until user exit program by pressing a key
-    waitKey(0);
-
+    inference();
     return 0;
 }
