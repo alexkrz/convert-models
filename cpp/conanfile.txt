@@ -1,0 +1,11 @@
+[requires]
+opencv/4.5.5
+[options]
+opencv*:with_tiff=False
+opencv*:with_webp=False
+opencv*:with_ffmpeg=False
+opencv*:with_gtk=True
+opencv*:with_qt=False
+[generators]
+CMakeDeps
+CMakeToolchain
