@@ -28,4 +28,5 @@ List of useful resources:
 
 - [x] Use opencv instead of onnxruntime
 - [x] Compare results between pytorch model and onnx model
-- [ ] Add cpp implementation for onnx model
+- [x] Add cpp implementation for onnx model
+- [ ] Replace absolut paths in example.cpp
