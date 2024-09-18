@@ -8,6 +8,27 @@
 
 namespace fs = std::filesystem;
 
+void show_progress(const int index, const int total)
+{
+    float progress = static_cast<float>(index) / total;
+    int barWidth = 70; // Width of the progress bar
+    std::cout << "[";
+    int pos = barWidth * progress;
+    for (int i = 0; i < barWidth; ++i)
+    {
+        if (i < pos)
+            std::cout << "=";
+        else if (i == pos)
+            std::cout << ">";
+        else
+            std::cout << " ";
+    }
+    // Display percentage and index/total
+    std::cout << "] " << int(progress * 100.0) << "% "
+              << "(" << index << "/" << total << ")\r";
+    std::cout.flush();
+}
+
 void inference(
     const std::string& data_dir = "/home/kurz/git-work/convert-models/data/lfw",
     const std::string& data_name = "lfw",
@@ -45,6 +66,7 @@ void inference(
 
     for (size_t idx = 0; idx < img_list.size(); ++idx)
     {
+        show_progress(idx, img_list.size());
         fs::path img_p = img_list[idx];
         filename_list.push_back(img_p.filename().string());
 
@@ -72,7 +94,7 @@ void inference(
         }
     }
 
-    std::cout << "Saving results.." << std::endl;
+    std::cout << "\nSaving results.." << std::endl;
     qs_scores_arr.resize(img_list.size());
     std::cout << "Shape of qs_scores_arr: " << qs_scores_arr.size() << std::endl;
 
