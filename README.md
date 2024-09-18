@@ -17,6 +17,19 @@
     pip install -r requirements.txt
     ```
 
+## C++ setup
+
+1. Navigate into `cpp` folder
+
+2. Set up conda environment
+
+    ```bash
+    conda env create -n conan -f environment.yml
+    ```
+
+This installs the specified versions of `conan` and `cmake` in a conda environment named `conan`.
+Further instructions on how to compile the code are described in `cpp/README.md`.
+
 ## Resources
 
 List of useful resources:
