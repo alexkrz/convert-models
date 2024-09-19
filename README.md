@@ -19,16 +19,18 @@
 
 ## C++ setup
 
-1. Navigate into `cpp` folder
+The project requires `cmake` >= 3.23 and `conan` > 2.0.
+If you cannot install these depencencies directly on your system, we recommend to use a conda virtual environment.
 
-2. Set up conda environment
+To set up the conda virtual environment, navigate into the `cpp` folder and run
 
-    ```bash
-    conda env create -n conan -f environment.yml
-    ```
+```bash
+conda env create -n conan -f environment.yml
+```
 
-This installs the specified versions of `conan` and `cmake` in a conda environment named `conan`.
-Further instructions on how to compile the code are described in `cpp/README.md`.
+The required packages are then installed in a conda environment with the name `conan`.
+
+Fur further information on compiling the C++ code, look into `cpp/README.md`.
 
 ## Resources
 
