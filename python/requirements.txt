@@ -4,3 +4,4 @@ tqdm==4.66.*
 matplotlib==3.9.*
 pandas==2.2.*
 opencv-python==4.10.*
+onnx==1.17.*
