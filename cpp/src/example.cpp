@@ -83,9 +83,10 @@ void inference(
 
         // Run forward pass
         model.setInput(blob);
-        std::vector<cv::Mat> outputs;
-        model.forward(outputs, model.getUnconnectedOutLayersNames()); // Why does it not return the "feats" node?
-        float qs = outputs[0].at<float>(0);
+        // std::vector<cv::Mat> outputs;
+        std::vector<cv::String> outLayerNames = model.getUnconnectedOutLayersNames(); // Why does it not return the "feats" node?
+        cv::Mat model_output = model.forward("qs");
+        float qs = model_output.at<float>(0, 0); // Would like to have bounds checking here
         qs_scores_arr[idx] = qs;
 
         if (idx == 199)
