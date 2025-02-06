@@ -30,7 +30,7 @@ void show_progress(const int index, const int total)
 }
 
 void inference(
-    const std::string& data_dir = "/home/kurz/git-work/convert-models/data/lfw",
+    const std::string& data_dir = "/home/kurz/git-work/convert-models/data/lfw-deepfunneled",
     const std::string& data_name = "lfw",
     const std::string& file_ext = ".jpg",
     const std::string& method_name = "crfiqa-l",
@@ -47,7 +47,7 @@ void inference(
 
     // Glob data_dir
     std::vector<fs::path> img_list;
-    for (const auto& entry : fs::directory_iterator(data_path))
+    for (const auto& entry : fs::recursive_directory_iterator(data_path))
     {
         if (entry.path().extension() == file_ext)
         {

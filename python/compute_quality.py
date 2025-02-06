@@ -51,7 +51,7 @@ class FaceDataset(Dataset):
         img = Image.open(file_p)
         # Check image shape and use resize transform if necessary
         if not img.size == self.img_shape:
-            print("Rezising image")
+            # print("Rezising image")
             img = self.resize_transform(img)
         # Apply additional transforms
         if self.transform:
@@ -60,7 +60,7 @@ class FaceDataset(Dataset):
 
 
 def main(
-    data_dir: str = "data/lfw",
+    data_dir: str = "data/lfw-deepfunneled",
     data_name: str = "lfw",
     file_ext: str = ".jpg",
     method_name: str = "crfiqa-l",

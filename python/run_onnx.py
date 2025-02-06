@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 
 def main(
-    data_dir: str = "data/lfw",
+    data_dir: str = "data/lfw-deepfunneled",
     data_name: str = "lfw",
     file_ext: str = ".jpg",
     method_name: str = "crfiqa-l",
@@ -22,7 +22,7 @@ def main(
         save_dir.mkdir()
 
     # Glob data_dir
-    img_list = sorted(list(data_dir.glob(f"*{file_ext}")))
+    img_list = sorted(list(data_dir.rglob(f"*{file_ext}")))
 
     # Read model and set input_size
     print("Loading onnx model..")

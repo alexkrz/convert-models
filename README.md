@@ -17,6 +17,8 @@
     pip install -r requirements.txt
     ```
 
+The steps to download and convert the Pytorch checkpoints are described in `python/README.md`.
+
 ## C++ setup
 
 The project requires `cmake` >= 3.23 and `conan` > 2.0.
