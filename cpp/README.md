@@ -1,6 +1,4 @@
-# CPP Template Conan
-
-A C++ Template using conan package manager
+# CPP Framework for using ONNX model
 
 ## Set up conan
 
