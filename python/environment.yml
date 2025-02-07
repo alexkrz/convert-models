@@ -2,7 +2,7 @@ channels:
   - pytorch
   - nvidia
   - conda-forge
-  - defaults
+  # - defaults
 dependencies:
   - python=3.11.*
   - pytorch=2.4.1=*cuda* # Need to specifically request cuda version
