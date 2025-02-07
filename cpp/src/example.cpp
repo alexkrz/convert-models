@@ -79,7 +79,14 @@ void inference(
         // cv::waitKey(0);
 
         cv::Mat blob;
-        cv::dnn::blobFromImage(img, blob, 1.0 / 127.5, input_size, cv::Scalar(127.5, 127.5, 127.5), true, false);
+        cv::dnn::blobFromImage(
+            img,
+            blob,
+            1.0 / 127.5,
+            input_size,
+            cv::Scalar(127.5, 127.5, 127.5),
+            true,
+            false);
 
         // Run forward pass
         model.setInput(blob);
