@@ -12,18 +12,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("height: {height}, width: {width}");
 
     // Convert to raw RGBA8 format
-    let img = original_img.clone().into_rgba8();
-    let pixels = img.into_raw();
+    let img_u8 = original_img.to_rgba8().into_raw();
 
     // Convert model input
-    let input_img = original_img.resize_exact(112, 112, FilterType::Nearest);
-    let rgb_img = input_img.to_rgb8();
-    let img_array: Vec<f32> = rgb_img
-        .pixels()
-        .flat_map(|p| p.0.iter().map(|&v| v as f32 / 255.0)) // Normalize
-        .collect();
+    let img_resized = original_img.resize_exact(112, 112, FilterType::Nearest);
+    let img_f32 = img_resized.to_rgb32f().into_raw();
+    let entry = &img_f32[5000];
+    println!("{:.4}", entry);
     // Convert to ndarray tensor shape (1, 3, 112, 112)
-    let input_tensor = Array4::from_shape_vec((1, 3, 112, 112), img_array)?;
+    let input_tensor = Array4::from_shape_vec((1, 3, 112, 112), img_f32)?;
 
     // Perform inference
     let model = Session::builder()?
@@ -38,7 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{predictions}");
 
     // Equivalent to cv::imshow()
-    let image = ImageView::new(ImageInfo::rgba8(width, height), &pixels);
+    let image = ImageView::new(ImageInfo::rgba8(width, height), &img_u8);
     let window = create_window("Image Viewer", Default::default())?;
     window.set_image("image-001", image)?;
 
