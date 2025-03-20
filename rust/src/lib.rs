@@ -1,9 +1,28 @@
+use clap::Parser;
 use image::{GenericImageView, imageops::FilterType};
 use ndarray::Array4;
 use ort::session::{Session, builder::GraphOptimizationLevel};
 // use show_image::{ImageInfo, ImageView, create_window, event};
-use std::env;
 use std::error::Error;
+
+/// Configuration for the inference
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Config {
+    /// Path to the model file
+    #[arg(short, long)]
+    pub model_p: String,
+
+    /// Path to the image file
+    #[arg(short, long)]
+    pub image_p: String,
+}
+
+impl Config {
+    pub fn new() -> Self {
+        Config::parse()
+    }
+}
 
 // #[show_image::main]
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
@@ -39,29 +58,6 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // }
 
     Ok(())
-}
-
-pub struct Config {
-    pub model_p: String,
-    pub image_p: String,
-}
-
-impl Config {
-    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
-        args.next(); // Skip program argument
-
-        let model_p = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get a model path"),
-        };
-
-        let image_p = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get an image path"),
-        };
-
-        Ok(Config { model_p, image_p })
-    }
 }
 
 pub fn model_inference(model_p: &str, image_p: &str) -> Result<Vec<f32>, Box<dyn Error>> {
