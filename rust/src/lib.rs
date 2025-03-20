@@ -2,7 +2,7 @@ use clap::Parser;
 use image::{GenericImageView, imageops::FilterType};
 use ndarray::Array4;
 use ort::session::{Session, builder::GraphOptimizationLevel};
-// use show_image::{ImageInfo, ImageView, create_window, event};
+use show_image::{ImageInfo, ImageView, create_window, event};
 use std::error::Error;
 
 /// Configuration for the inference
@@ -24,39 +24,31 @@ impl Config {
     }
 }
 
-// #[show_image::main]
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+pub fn display_image(image_p: &str) -> Result<(), Box<dyn Error>> {
     // Load the image
-    // let original_img = image::open(config.image_p)?;
-    // let (width, height) = original_img.dimensions();
-    // println!("height: {height}, width: {width}");
+    let original_img = image::open(image_p)?;
+    let (width, height) = original_img.dimensions();
+    println!("height: {height}, width: {width}");
 
     // Convert to raw RGBA8 format
-    // let img_u8 = original_img.to_rgba8().into_raw();
+    let img_u8 = original_img.to_rgba8().into_raw();
 
-    // Perform model inference
-    let result = model_inference(&config.model_p, &config.image_p).unwrap(); // Panics if Err
-    for entry in result {
-        println!("qs: {:.4}", entry);
+    // Equivalent to cv::imshow()
+    let image = ImageView::new(ImageInfo::rgba8(width, height), &img_u8);
+    let window = create_window("Image Viewer", Default::default())?;
+    window.set_image("image-001", image)?;
+
+    // Equivalent to cv::waitKey()
+    for event in window.event_channel()? {
+        if let event::WindowEvent::KeyboardInput(event) = event {
+            // println!("{:#?}", event);
+            if event.input.key_code == Some(event::VirtualKeyCode::Escape)
+                && event.input.state.is_pressed()
+            {
+                break;
+            }
+        }
     }
-
-    // // Equivalent to cv::imshow()
-    // let image = ImageView::new(ImageInfo::rgba8(width, height), &img_u8);
-    // let window = create_window("Image Viewer", Default::default())?;
-    // window.set_image("image-001", image)?;
-
-    // // Equivalent to cv::waitKey()
-    // for event in window.event_channel()? {
-    //     if let event::WindowEvent::KeyboardInput(event) = event {
-    //         // println!("{:#?}", event);
-    //         if event.input.key_code == Some(event::VirtualKeyCode::Escape)
-    //             && event.input.state.is_pressed()
-    //         {
-    //             break;
-    //         }
-    //     }
-    // }
-
     Ok(())
 }
 
