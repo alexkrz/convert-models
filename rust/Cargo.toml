@@ -8,3 +8,4 @@ image = "0.25"      # For loading images
 show-image = "0.14" # For displaying images
 ndarray = "0.16"    # Data structure to use with ort
 ort = "=2.0.0-rc.9" # For running inference with onnx models
+approx = "0.5"      # For comparing results
