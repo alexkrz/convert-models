@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class GradientReverse(torch.autograd.Function):
     '''
     Gradient reverse layer
@@ -100,4 +101,4 @@ class DebiasedFIQA(nn.Module):
         features = self.backbone.get_features(x)
         # quality regression using the last feature
         quality = self.quality_regressor(features[-1])
-        return quality, features
+        return features[-1], quality

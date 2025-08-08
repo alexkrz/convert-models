@@ -23,14 +23,12 @@ AVAIL_METHODS = [
 def adjust_debfiqa_dict(model: torch.nn.Module, state_dict: OrderedDict) -> OrderedDict:
     adjusted_dict = OrderedDict()
     for k, v in state_dict.items():
-        new_k = "backbone." + k.split("backbone.features.")[-1]
+        new_k = k.replace("backbone.features.", "backbone.")
         if new_k in model.state_dict().keys() and v.size() == model.state_dict()[new_k].size():
             adjusted_dict[new_k] = v
     num_model = len(model.state_dict().keys())
     num_ckpt = len(adjusted_dict.keys())
-    # print(num_model)
-    # print(num_ckpt)
-    # assert num_model == num_ckpt, "Sizes of model keys and checkpoint keys do not match"
+    assert num_model == num_ckpt, "Sizes of model keys and checkpoint keys do not match"
     return adjusted_dict
 
 
@@ -72,13 +70,8 @@ def main(
     # Input to the model
     batch_size = 64
     x = torch.randn(batch_size, 3, 112, 112, requires_grad=True)
-    if "crfiqa" in method_name:
-        feats, qs = model(x)
-    elif method_name == "debfiqa":
-        qs, feats = model(x)
-    else:
-        raise NotImplementedError()
-
+    
+    feats, qs = model(x)
     print("feats shape:", feats.shape)
     print("qs shape:", qs.shape)
 
