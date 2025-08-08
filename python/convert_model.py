@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 from pathlib import Path
 from typing import Optional
 
@@ -9,17 +10,33 @@ from torch import nn
 
 from cr_fiqa.backbones.iresnet import iresnet50 as crfiqa_iresnet50  # isort: skip
 from cr_fiqa.backbones.iresnet import iresnet100 as crfiqa_iresnet100  # isort: skip
-
+from debfiqa.debfiqa import DebiasedFIQA
+from debfiqa.iresnet_magface import iresnet100 as debfiqa_iresnet100
 
 AVAIL_METHODS = [
     "crfiqa-s",
     "crfiqa-l",
+    "debfiqa",
 ]
 
 
+def adjust_debfiqa_dict(model: torch.nn.Module, state_dict: OrderedDict) -> OrderedDict:
+    adjusted_dict = OrderedDict()
+    for k, v in state_dict.items():
+        new_k = "backbone." + k.split("backbone.features.")[-1]
+        if new_k in model.state_dict().keys() and v.size() == model.state_dict()[new_k].size():
+            adjusted_dict[new_k] = v
+    num_model = len(model.state_dict().keys())
+    num_ckpt = len(adjusted_dict.keys())
+    # print(num_model)
+    # print(num_ckpt)
+    # assert num_model == num_ckpt, "Sizes of model keys and checkpoint keys do not match"
+    return adjusted_dict
+
+
 def main(
-    method_name: str = "crfiqa-l",
-    checkpoint_fp: str = "checkpoints/pytorch/CRFIQA-L/181952backbone.pth",
+    method_name: str = "debfiqa",
+    checkpoint_fp: str = "checkpoints/pytorch/DEBFIQA/debfiqa_26.pth",
     save_dir: str = "checkpoints/onnx",
 ):
     assert method_name in AVAIL_METHODS
@@ -36,6 +53,16 @@ def main(
             model = crfiqa_iresnet100(num_features=512, qs=1, use_se=False)
         weight = torch.load(checkpoint_fp, weights_only=True)
         model.load_state_dict(weight)
+    elif method_name == "debfiqa":
+        weight = torch.load(checkpoint_fp, weights_only=True)
+        # print(weight.keys())
+        backbone = debfiqa_iresnet100()
+        backbone.eval()
+        place_holder = torch.zeros([3, 112, 112]).unsqueeze(0)
+        feature_dims = backbone.get_feature_sizes(place_holder)
+        model = DebiasedFIQA(backbone=backbone, feature_dims=feature_dims)
+        weight = adjust_debfiqa_dict(model, weight)
+        model.load_state_dict(weight)
     else:
         raise NotImplementedError()
 
@@ -45,7 +72,12 @@ def main(
     # Input to the model
     batch_size = 64
     x = torch.randn(batch_size, 3, 112, 112, requires_grad=True)
-    feats, qs = model(x)
+    if "crfiqa" in method_name:
+        feats, qs = model(x)
+    elif method_name == "debfiqa":
+        qs, feats = model(x)
+    else:
+        raise NotImplementedError()
 
     print("feats shape:", feats.shape)
     print("qs shape:", qs.shape)
