@@ -6,3 +6,4 @@ tqdm==4.66.*
 pandas==2.2.*
 opencv-python==4.10.*
 onnx==1.17.*
+onnxruntime==1.22.*
