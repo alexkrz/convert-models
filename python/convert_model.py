@@ -33,8 +33,8 @@ def adjust_debfiqa_dict(model: torch.nn.Module, state_dict: OrderedDict) -> Orde
 
 
 def main(
-    method_name: str = "debfiqa",
-    checkpoint_fp: str = "checkpoints/pytorch/DEBFIQA/debfiqa_26.pth",
+    method_name: str = "crfiqa-l",
+    checkpoint_fp: str = "checkpoints/pytorch/CRFIQA-L/181952backbone.pth",
     save_dir: str = "checkpoints/onnx",
 ):
     assert method_name in AVAIL_METHODS
