@@ -1,7 +1,6 @@
 import os
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import torch.onnx
@@ -70,7 +69,7 @@ def main(
     # Input to the model
     batch_size = 64
     x = torch.randn(batch_size, 3, 112, 112, requires_grad=True)
-    
+
     feats, qs = model(x)
     print("feats shape:", feats.shape)
     print("qs shape:", qs.shape)

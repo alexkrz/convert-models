@@ -4,8 +4,8 @@ channels:
   - conda-forge
   # - defaults
 dependencies:
-  - python=3.11.*
-  - pytorch=2.4.1=*cuda* # Need to specifically request cuda version
+  - python=3.12.*
+  - pytorch=2.4.* # *=*cuda* # Might need to specifically request cuda version
   - torchvision=0.19.*
   - pip>=23
   # Install pip dependencies with pip install -r requirements.txt
