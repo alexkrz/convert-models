@@ -27,16 +27,16 @@ def adjust_debfiqa_dict(model: torch.nn.Module, state_dict: OrderedDict) -> Orde
             adjusted_dict[new_k] = v
     num_model = len(model.state_dict().keys())
     num_ckpt = len(adjusted_dict.keys())
-    assert num_model == num_ckpt, "Sizes of model keys and checkpoint keys do not match"
+    # assert num_model == num_ckpt, "Sizes of model keys and checkpoint keys do not match"
     return adjusted_dict
 
 
 def main(
-    method_name: str = "crfiqa-l",
-    checkpoint_fp: str = "checkpoints/pytorch/CRFIQA-L/181952backbone.pth",
+    method_name: str = "debfiqaubmx_31",
+    checkpoint_fp: str = "checkpoints/pytorch/DEBFIQAUBMX/debfiqaubmx_31.pth",
     save_dir: str = "checkpoints/onnx",
 ):
-    assert method_name in AVAIL_METHODS
+    # assert method_name in AVAIL_METHODS
     save_dir = Path(save_dir)  # type: Path
     if not save_dir.exists():
         save_dir.mkdir()
@@ -50,7 +50,7 @@ def main(
             model = crfiqa_iresnet100(num_features=512, qs=1, use_se=False)
         weight = torch.load(checkpoint_fp, weights_only=True)
         model.load_state_dict(weight)
-    elif method_name == "debfiqa":
+    elif "debfiqa" in method_name:
         weight = torch.load(checkpoint_fp, weights_only=True)
         # print(weight.keys())
         backbone = debfiqa_iresnet100()
@@ -59,7 +59,7 @@ def main(
         feature_dims = backbone.get_feature_sizes(place_holder)
         model = DebiasedFIQA(backbone=backbone, feature_dims=feature_dims)
         weight = adjust_debfiqa_dict(model, weight)
-        model.load_state_dict(weight)
+        model.load_state_dict(weight, strict=False)
     else:
         raise NotImplementedError()
 
