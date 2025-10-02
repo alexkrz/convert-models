@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 import torch
-from jsonargparse import CLI
+from jsonargparse import auto_cli
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
@@ -57,8 +57,8 @@ def main(
     data_dir: str = "data/lfw-deepfunneled",
     data_name: str = "lfw",
     file_ext: str = ".jpg",
-    method_name: str = "debfiqa_26",
-    checkpoint_fp: str = "checkpoints/pytorch/DEBFIQA/debfiqa_26.pth",
+    method_name: str = "debfiqaubmx_31",
+    checkpoint_fp: str = "checkpoints/pytorch/DEBFIQAUBMX/debfiqaubmx_31.pth",
     save_dir: str = "results",
     gpu: Optional[int] = 0,
 ):
@@ -116,4 +116,4 @@ def main(
 
 
 if __name__ == "__main__":
-    CLI(main, as_positional=False, parser_mode="omegaconf")
+    auto_cli(main, as_positional=False)

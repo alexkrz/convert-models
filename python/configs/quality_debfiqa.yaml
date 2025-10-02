@@ -1,0 +1,7 @@
+data_dir: data/lfw-deepfunneled
+data_name: lfw
+file_ext: .jpg
+method_name: debfiqaubmx_31
+checkpoint_fp: checkpoints/pytorch/DEBFIQAUBMX/debfiqaubmx_31.pth
+save_dir: results
+gpu: 0
