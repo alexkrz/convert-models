@@ -14,8 +14,8 @@ def main(
     data_dir: str = "data/lfw-deepfunneled",
     data_name: str = "lfw",
     file_ext: str = ".jpg",
-    method_name: str = "crfiqa-l",
-    checkpoint_fp: str = "checkpoints/onnx/crfiqa-l.onnx",
+    method_name: str = "debfiqa_26",
+    checkpoint_fp: str = "checkpoints/onnx/debfiqa_26.onnx",
     save_dir: str = "results",
 ):
     # Check directories

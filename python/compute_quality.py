@@ -11,13 +11,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from tqdm import tqdm
 
-from cr_fiqa.backbones.iresnet import iresnet50 as crfiqa_iresnet50  # isort: skip
-from cr_fiqa.backbones.iresnet import iresnet100 as crfiqa_iresnet100  # isort: skip
-
-AVAIL_METHODS = [
-    "crfiqa-s",
-    "crfiqa-l",
-]
+from src.utils import load_model  # isort: skip
 
 
 class FaceDataset(Dataset):
@@ -63,12 +57,11 @@ def main(
     data_dir: str = "data/lfw-deepfunneled",
     data_name: str = "lfw",
     file_ext: str = ".jpg",
-    method_name: str = "crfiqa-l",
-    checkpoint_fp: str = "checkpoints/pytorch/CRFIQA-L/181952backbone.pth",
+    method_name: str = "debfiqa_26",
+    checkpoint_fp: str = "checkpoints/pytorch/DEBFIQA/debfiqa_26.pth",
     save_dir: str = "results",
     gpu: Optional[int] = 0,
 ):
-    assert method_name in AVAIL_METHODS
     data_dir = Path(data_dir)  # type: Path
     assert data_dir.exists()
     save_dir = Path(save_dir)  # type: Path
@@ -89,17 +82,7 @@ def main(
     dataloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=8)
 
     # Load model
-    print(f"Loading model for {method_name}..")
-    if "crfiqa" in method_name:
-        if method_name == "crfiqa-s":
-            model = crfiqa_iresnet50(num_features=512, qs=1, use_se=False)
-        if method_name == "crfiqa-l":
-            model = crfiqa_iresnet100(num_features=512, qs=1, use_se=False)
-        weight = torch.load(checkpoint_fp, weights_only=True)
-        model.load_state_dict(weight)
-    else:
-        raise NotImplementedError()
-
+    model = load_model(method_name, checkpoint_fp)
     model.to(device)
     model.eval()
 
@@ -110,10 +93,7 @@ def main(
     for batch_data in tqdm(dataloader):
         imgs, filenames = batch_data
         with torch.no_grad():
-            if "crfiqa" in method_name:
-                feats, qs = model(imgs.to(device))
-            else:
-                raise NotImplementedError()
+            feats, qs = model(imgs.to(device))
         qs_scores = qs.cpu().numpy()  # Move qs_scores to CPU and convert to numpy array
         filename_list += filenames
         qs_score_list.append(qs_scores)
